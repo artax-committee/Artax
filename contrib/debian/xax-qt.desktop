@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Name=Bitcoin Core
+Comment=Connect to the Artax P2P Network
+Exec=xax-qt %u
+Terminal=false
+Type=Application
+Icon=xax128
+MimeType=x-scheme-handler/xax;
+Categories=Office;Finance;
+StartupWMClass=Artax-qt
+Name[en_US]=xax-qt

@@ -1,0 +1,6 @@
+usr/local/bin/xax-qt usr/bin
+share/pixmaps/xax32.xpm usr/share/pixmaps
+share/pixmaps/xax16.xpm usr/share/pixmaps
+share/pixmaps/xax128.png usr/share/pixmaps
+debian/xax-qt.desktop usr/share/applications
+debian/xax-qt.protocol usr/share/kde4/services/
