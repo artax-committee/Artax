@@ -17,16 +17,11 @@ purposes. As such there are repository "maintainers" who are responsible for upd
 -Active Artax Development Team (find us on Discord or Telegram)
 -
 -@osfera69 (lead)
--@Crypto44131
 -@crypto_dude
--@mindkontrolultra
 -@goosewobbler
--@gote
--@Dany_CX
--@talium
--@madcoin
--@Lead
--@paranoidtruth
+-@Respio
+-@Shoduncat
+-Railz
 
 
 -Contact the team on Discord or Telegram

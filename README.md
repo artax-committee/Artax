@@ -1,11 +1,11 @@
                    _____ __________________________  ____  ___
                   /  _  \\______   \__    ___/  _  \ \   \/  /
-                 /  /_\  \|       _/ |    | /  /_\  \ \     /  2018 Artax/ARTX
+                 /  /_\  \|       _/ |    | /  /_\  \ \     /  2019 Artax/XAX
                 /    |    \    |   \ |    |/    |    \/     \ 
                 \____|____/____|___/ |____|\____|____/___/\__\
                                      
 
-V1.0.0.0 - Artax PoW/PoS Chain [NO ICO] No Pre Sale.
+V1.0.1 - Artax PoS Chain [NO ICO] No Pre Sale.
 The only way you could take part in this utility chain originally was by mining. As the committee changed hands over the time, so did the vision and roadmap. 
 
 Artax is a Powerful Node-Based PoS-based cryptocurrency. Artax is run by a volunteer, non-profit committee.
@@ -27,9 +27,10 @@ A community coin by the community, for the community.
 | Site | link |
 |:-----------|:-----------|
 | Bitcointalk | https://bitcointalk.org/index.php?topic=3267175.0 |
-| Twitter | http://twitter.com/ArtaxCoin |
-| Discord | https://discord.gg/btMYs4 |
-| Website | http://www.artaxcoin.org |
+| Twitter  | https://twitter.com/ArtaxCoin |
+| Discord  | https://discord.gg/xyHnuZu |
+| Website  | https://www.artaxcoin.org |
+| Telegram | https://t.co/Qf6ZFYLPrZ |
 
 
 Contributing to Artax (XAX)
@@ -63,24 +64,14 @@ are historically voted by the community into the "Dev-committee" . From the Dev-
 there are repository "Dev-Premine-Managers" who are responsible for holding premine, 
 managing chat servers, merging, moderation of committee and the appointment of new Dev members.
 
-Development is on-going in Telegram, Discord and on the Artax Wickr Server. Ask for an invite if you would like to 
+Development is on-going in Telegram, Discord and Twitter. Ask for an invite if you would like to 
 volunteer in the committee.
 
 Artax has had no Initial Coin Offering (ICO) and was subject to a true fair launch.
 The only way people could get XAX originally was from mining. Per the
 original project roadmap, a range of decisions were made by the Dev Team/Committee and 
 the whole premine amount (still unspent from hash genesis) was then burned around
-a month after launch. It was decided that a forked chain would continue with the whole premine being disbursed to the following Dev-Committee members and their respective wallet addresses:
-
-
-@StakeAndNodes: AYo6KjNbrtH5nuFX4ES7GTq7BN2Gpib6rh - 75088.9525
-@gote: ANzsMsk2SrrpN5vyGbXNTXryGJpooXUiQT - 84025.55
-@ihackcoinz: ANqYimc5bTtugT98e4ykWp4fCveS86Qv7T - 52161.3825
-@calinux: AeAEgnZZMcKxd5DEKDy4VtETLssxvkJkeh  - 52161.3825
-@CryptoSazerac: AKHfJVADgWPjVDcES5LA98B1wR22tFiqQR - 52161.3825
-
-The Premine Holdings of Artax.
-
+a month after launch. 
 
 The manifesto of the Artax Community from inception is to better blockchain technology and to push the 
 boundaries of on-chain storage and scaling. It is important to note that nobody is obligated to contribute to Artax. But the more people that contribute to its codebase, the better for the future of blockchain.
@@ -92,7 +83,7 @@ The Artax Committee should never have less than six members at any one time.
 
 For more information please visit the website:
 
-http://artaxcoin.org
+https://www.artaxcoin.org
 
 
 
