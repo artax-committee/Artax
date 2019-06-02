@@ -6,6 +6,7 @@
 
 #include <tinyformat.h>
 
+#include <string>
 
 /**
  * Name of client reported in the 'version' message. Report the same name
@@ -66,9 +67,18 @@ const std::string CLIENT_NAME("ArtaxDaaS");
 #endif
 #endif
 
-const std::string CLIENT_BUILD(BUILD_DESC CLIENT_VERSION_SUFFIX);
+#ifndef BUILD_DATE
+#ifdef GIT_COMMIT_DATE
+#define BUILD_DATE GIT_COMMIT_DATE
+#else
+#define BUILD_DATE __DATE__ ", " __TIME__
+#endif
+#endif
 
-static std::string FormatVersion(int nVersion)
+const std::string CLIENT_BUILD(BUILD_DESC CLIENT_VERSION_SUFFIX);
+const std::string CLIENT_DATE(BUILD_DATE);
+
+std::string FormatVersion(int nVersion)
 {
     if (nVersion % 100 == 0)
         return strprintf("%d.%d.%d", nVersion / 1000000, (nVersion / 10000) % 100, (nVersion / 100) % 100);
@@ -78,7 +88,7 @@ static std::string FormatVersion(int nVersion)
 
 std::string FormatFullVersion()
 {
-    return CLIENT_BUILD;
+    return FormatVersion(CLIENT_VERSION);
 }
 
 /**

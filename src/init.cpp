@@ -547,8 +547,8 @@ void SetupServerArgs()
 
 std::string LicenseInfo()
 {
-    const std::string URL_SOURCE_CODE = "<https://github.com/xaxproject/xax>";
-    const std::string URL_WEBSITE = "<https://xax.org>";
+    const std::string URL_SOURCE_CODE = "<https://github.com/artax-committee/Artax>";
+    const std::string URL_WEBSITE = "<https://www.artaxcoin.org>";
 
     return CopyrightHolders(strprintf(_("Copyright (C) %i"), COPYRIGHT_YEAR) + " ") + "\n" +
            "\n" +
