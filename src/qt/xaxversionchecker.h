@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#define XAX_RELEASES "https://github.com/xaxproject/xax/releases"
+#define XAX_RELEASES "https://github.com/artax-committee/Artax/releases"
 
 class Version {
 
