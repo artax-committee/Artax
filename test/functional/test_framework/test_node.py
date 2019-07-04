@@ -161,8 +161,8 @@ class TestNode():
         # add environment variable LIBC_FATAL_STDERR_=1 so that libc errors are written to stderr and not the terminal
         subp_env = dict(os.environ, LIBC_FATAL_STDERR_="1")
 
-        if not any(arg.startswith('-staking=') for arg in extra_args):
-            extra_args.append('-staking=0')
+        if not any(arg.startswith('-scratching=') for arg in extra_args):
+            extra_args.append('-scratching=0')
         self.process = subprocess.Popen(self.args + extra_args, env=subp_env, stdout=stdout, stderr=stderr, **kwargs)
 
         self.running = True

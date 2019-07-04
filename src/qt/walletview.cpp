@@ -387,7 +387,7 @@ void WalletView::unlockWallet(bool fromMenu)
     if (walletModel->getEncryptionStatus() == WalletModel::Locked)
     {
         AskPassphraseDialog::Mode mode = fromMenu ?
-            AskPassphraseDialog::UnlockStaking : AskPassphraseDialog::Unlock;
+            AskPassphraseDialog::UnlockScratching : AskPassphraseDialog::Unlock;
         AskPassphraseDialog dlg(mode, this);
         dlg.setModel(walletModel);
         dlg.exec();

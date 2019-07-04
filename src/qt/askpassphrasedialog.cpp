@@ -45,7 +45,7 @@ AskPassphraseDialog::AskPassphraseDialog(Mode _mode, QWidget *parent) :
     ui->passEdit2->installEventFilter(this);
     ui->passEdit3->installEventFilter(this);
 
-    ui->stakingCheckBox->hide();
+    ui->scratchingCheckBox->hide();
 
     switch(mode)
     {
@@ -55,9 +55,9 @@ AskPassphraseDialog::AskPassphraseDialog(Mode _mode, QWidget *parent) :
             ui->passEdit1->hide();
             setWindowTitle(tr("Encrypt wallet"));
             break;
-        case UnlockStaking:
-            ui->stakingCheckBox->setChecked(true);
-            ui->stakingCheckBox->show();
+        case UnlockScratching:
+            ui->scratchingCheckBox->setChecked(true);
+            ui->scratchingCheckBox->show();
         case Unlock: // Ask passphrase
             ui->warningLabel->setText(tr("This operation needs your wallet passphrase to unlock the wallet."));
             ui->passLabel2->hide();
@@ -95,7 +95,7 @@ AskPassphraseDialog::~AskPassphraseDialog()
 void AskPassphraseDialog::setModel(WalletModel *_model)
 {
     this->model = _model;
-    if(model) ui->stakingCheckBox->setChecked(model->getWalletUnlockStakingOnly() || mode == UnlockStaking);
+    if(model) ui->scratchingCheckBox->setChecked(model->getWalletUnlockScratchingOnly() || mode == UnlockScratching);
 }
 
 void AskPassphraseDialog::accept()
@@ -163,7 +163,7 @@ void AskPassphraseDialog::accept()
             QDialog::reject(); // Cancelled
         }
         } break;
-    case UnlockStaking:
+    case UnlockScratching:
     case Unlock:
         if(!model->setWalletLocked(false, oldpass))
         {
@@ -172,7 +172,7 @@ void AskPassphraseDialog::accept()
         }
         else
         {
-            model->setWalletUnlockStakingOnly(ui->stakingCheckBox->isChecked());
+            model->setWalletUnlockScratchingOnly(ui->scratchingCheckBox->isChecked());
             QDialog::accept(); // Success
         }
         break;
@@ -220,7 +220,7 @@ void AskPassphraseDialog::textChanged()
     case Encrypt: // New passphrase x2
         acceptable = !ui->passEdit2->text().isEmpty() && !ui->passEdit3->text().isEmpty();
         break;
-    case UnlockStaking:
+    case UnlockScratching:
     case Unlock: // Old passphrase x1
     case Decrypt:
         acceptable = !ui->passEdit1->text().isEmpty();

@@ -779,13 +779,13 @@ public:
     { 
         return m_wallet.m_last_coin_stake_search_interval;
     }
-    bool getWalletUnlockStakingOnly() override
+    bool getWalletUnlockScratchingOnly() override
     {
-        return m_wallet.m_wallet_unlock_staking_only;
+        return m_wallet.m_wallet_unlock_scratching_only;
     }
-    void setWalletUnlockStakingOnly(bool unlock) override
+    void setWalletUnlockScratchingOnly(bool unlock) override
     {
-        m_wallet.m_wallet_unlock_staking_only = unlock;
+        m_wallet.m_wallet_unlock_scratching_only = unlock;
     }
     bool cleanTokenTxEntries() override
     {

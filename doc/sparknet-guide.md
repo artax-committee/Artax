@@ -199,8 +199,8 @@ Artax supports all of the RPC commands supported by Bitcoin Core, but also inclu
 * `sendtocontract` - This will interact with an already deployed smart contract on the Artax blockchain. All computation takes place on-chain and any state changes will be persisted to the blockchain. This allows tokens to be sent to a smart contract. This requires gas.
 * `getaccountinfo` - This will show some low level information about a contract, including the contract's bytecode, stored data, and balance on the blockchain.
 * `listcontracts` - This will output a list of currently deployed contract addresses with their respective balance. This RPC call may change or be removed in the future.
-* `reservebalance` - This will reserve a set amount of coins so that they do not participate in staking. If you reserve as many or more coins than are in your wallet, then you will not participate at all in staking and block creation for the network.
-* `getstakinginfo` - This will show some info about the current node's staking status, including network difficulty and expected time (in seconds) until staking a new block.
+* `reservebalance` - This will reserve a set amount of coins so that they do not participate in scratching. If you reserve as many or more coins than are in your wallet, then you will not participate at all in scratching and block creation for the network.
+* `getscratchinginfo` - This will show some info about the current node's scratching status, including network difficulty and expected time (in seconds) until scratching a new block.
 * `gethexaddress` - This will convert a standard Base58 pubkeyhash address to a hex address for use in smart contracts
 * `fromhexaddress` - this will convert a hex address used in smart contracts to a standard Base58 pubkeyhash address
 

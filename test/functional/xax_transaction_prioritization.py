@@ -14,19 +14,19 @@ class ArtaxTransactionPrioritizationTest(BitcoinTestFramework):
     def set_test_params(self):
         self.setup_clean_chain = True
         self.num_nodes = 1
-        self.extra_args = [['-staking=1', '-rpcmaxgasprice=10000000']]
+        self.extra_args = [['-scratching=1', '-rpcmaxgasprice=10000000']]
 
     def restart_node(self):
         self.stop_nodes()
         self.start_nodes()
         self.node = self.nodes[0]
 
-    def stake_or_mine(self, old_block_count=None, use_staking=False):
-        # Since staking is switched on by default, if a block has been staked return that block's hash
+    def stake_or_mine(self, old_block_count=None, use_scratching=False):
+        # Since scratching is switched on by default, if a block has been staked return that block's hash
         if self.node.getblockcount() > old_block_count:
             return self.node.getbestblockhash()
 
-        if use_staking:
+        if use_scratching:
             if not old_block_count:
                 old_block_count = self.node.getblockcount()
             while old_block_count == self.node.getblockcount():
@@ -104,7 +104,7 @@ class ArtaxTransactionPrioritizationTest(BitcoinTestFramework):
         tx_hex_signed = self.node.signrawtransactionwithwallet(bytes_to_hex_str(tx.serialize()))['hex']
         return self.node.sendrawtransaction(tx_hex_signed)
 
-    def verify_contract_txs_are_added_last_test(self, with_restart=False, use_staking=False):
+    def verify_contract_txs_are_added_last_test(self, with_restart=False, use_scratching=False):
         # Set the fee really high so that it should normally be added first if we only looked at the fee/size
         contract_txid = self.node.createcontract("00", 4*10**6, 0.0001)['txid']
         normal_txid = self.node.sendtoaddress(self.node.getnewaddress(), 1)
@@ -112,10 +112,10 @@ class ArtaxTransactionPrioritizationTest(BitcoinTestFramework):
         old_block_count = self.node.getblockcount()
         if with_restart:
             self.restart_node()
-        block_hash = self.stake_or_mine(old_block_count=old_block_count, use_staking=use_staking)
+        block_hash = self.stake_or_mine(old_block_count=old_block_count, use_scratching=use_scratching)
 
         block_txs = self.node.getblock(block_hash)['tx']
-        if use_staking:
+        if use_scratching:
             block_txs.pop(1) # Ignore the coinstake tx so we can reuse the tests for both pow and pos
         assert_equal(len(block_txs), 3)
         assert_equal(block_txs.index(normal_txid), 1)
@@ -123,7 +123,7 @@ class ArtaxTransactionPrioritizationTest(BitcoinTestFramework):
 
     # Verifies that contract transactions are correctly ordered by descending (minimum among outputs) gas price and ascending size
     # Sends 7 txs in total
-    def verify_contract_txs_internal_order_test(self, with_restart=False, use_staking=False):
+    def verify_contract_txs_internal_order_test(self, with_restart=False, use_scratching=False):
         contract_address = list(self.node.listcontracts().keys())[0]
         sender = self.node.getnewaddress()
         tx4 = self.send_op_call_outputs_with_gas_price(contract_address, [0.0001])
@@ -137,10 +137,10 @@ class ArtaxTransactionPrioritizationTest(BitcoinTestFramework):
         if with_restart:
             self.restart_node()
         # Ordering based on gas_price should now be
-        block_hash = self.stake_or_mine(old_block_count=old_block_count, use_staking=use_staking)
+        block_hash = self.stake_or_mine(old_block_count=old_block_count, use_scratching=use_scratching)
         block = self.node.getblock(block_hash)
         block_txs = block['tx']
-        if use_staking:
+        if use_scratching:
             block_txs.pop(1) # Ignore the coinstake tx so we can reuse the tests for both pow and pos
 
         assert_equal(block_txs[1:], [tx1, tx2, tx3, tx4, tx5, tx6, tx7])
@@ -155,7 +155,7 @@ class ArtaxTransactionPrioritizationTest(BitcoinTestFramework):
     # 3. a normal tx with a fee < tx2 and tx3
     # 4. a op call contract tx spending tx2.
     # Expected transaction ordering in the block should thus be tx1, tx2, tx3, tx4
-    def verify_ancestor_chain_with_contract_txs_test(self, with_restart=False, use_staking=False):
+    def verify_ancestor_chain_with_contract_txs_test(self, with_restart=False, use_scratching=False):
         contract_address = list(self.node.listcontracts().keys())[0]
         tx1 = self.send_transaction_with_fee(0.01)
         tx2 = self.send_transaction_with_fee(0.005)
@@ -169,11 +169,11 @@ class ArtaxTransactionPrioritizationTest(BitcoinTestFramework):
         old_block_count = self.node.getblockcount()
         if with_restart:
             self.restart_node()
-        block_hash = self.stake_or_mine(old_block_count=old_block_count, use_staking=use_staking)
+        block_hash = self.stake_or_mine(old_block_count=old_block_count, use_scratching=use_scratching)
 
         block_txs = self.node.getblock(block_hash)['tx']
 
-        if use_staking:
+        if use_scratching:
             block_txs.pop(1) # Ignore the coinstake tx so we can reuse the tests for both pow and pos
 
         for t in block_txs[1:]:
@@ -191,7 +191,7 @@ class ArtaxTransactionPrioritizationTest(BitcoinTestFramework):
         assert_equal(block_txs[4], tx4)
 
     # Creates two different contract tx chains.
-    def verify_contract_ancestor_txs_test(self, with_restart=False, use_staking=False):
+    def verify_contract_ancestor_txs_test(self, with_restart=False, use_scratching=False):
         contract_address = list(self.node.listcontracts().keys())[0]
         for unspent in self.node.listunspent():
             if unspent['amount'] > 10000:
@@ -237,10 +237,10 @@ class ArtaxTransactionPrioritizationTest(BitcoinTestFramework):
         old_block_count = self.node.getblockcount()
         if with_restart:
             self.restart_node()
-        block_hash = self.stake_or_mine(old_block_count=old_block_count, use_staking=use_staking)
+        block_hash = self.stake_or_mine(old_block_count=old_block_count, use_scratching=use_scratching)
         block_txs = self.node.getblock(block_hash)['tx']
         
-        if use_staking:
+        if use_scratching:
             block_txs.pop(1) # Ignore the coinstake tx so we can reuse the tests for both pow and pos
 
         # Even though the gas prices differ, since they the ancestor txs must be included before the child txs we expect the order by which they were sent,
@@ -271,19 +271,19 @@ class ArtaxTransactionPrioritizationTest(BitcoinTestFramework):
         assert_equal(self.node.getrawmempool(), [])
 
         print("running pos tests")
-        self.verify_contract_txs_are_added_last_test(use_staking=True)
-        self.verify_ancestor_chain_with_contract_txs_test(use_staking=True)
-        self.verify_contract_txs_internal_order_test(use_staking=True)
-        self.verify_contract_ancestor_txs_test(use_staking=True)
+        self.verify_contract_txs_are_added_last_test(use_scratching=True)
+        self.verify_ancestor_chain_with_contract_txs_test(use_scratching=True)
+        self.verify_contract_txs_internal_order_test(use_scratching=True)
+        self.verify_contract_ancestor_txs_test(use_scratching=True)
 
         # Verify that the mempool is empty before running more tests
         assert_equal(self.node.getrawmempool(), [])
 
         print("running pos tests with restart")
-        self.verify_contract_txs_are_added_last_test(with_restart=True, use_staking=True)
-        self.verify_ancestor_chain_with_contract_txs_test(with_restart=True, use_staking=True)
-        self.verify_contract_txs_internal_order_test(with_restart=True, use_staking=True)
-        self.verify_contract_ancestor_txs_test(with_restart=True, use_staking=True)
+        self.verify_contract_txs_are_added_last_test(with_restart=True, use_scratching=True)
+        self.verify_ancestor_chain_with_contract_txs_test(with_restart=True, use_scratching=True)
+        self.verify_contract_txs_internal_order_test(with_restart=True, use_scratching=True)
+        self.verify_contract_ancestor_txs_test(with_restart=True, use_scratching=True)
 
 if __name__ == '__main__':
     ArtaxTransactionPrioritizationTest().main()

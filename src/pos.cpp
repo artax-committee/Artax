@@ -149,7 +149,7 @@ bool CheckKernel(CBlockIndex* pindexPrev, unsigned int nBits, uint32_t nTimeBloc
     uint256 hashProofOfStake, targetProofOfStake;
     auto it=cache.find(prevout);
     if(it == cache.end()) {
-        //not found in cache (shouldn't happen during staking, only during verification which does not use cache)
+        //not found in cache (shouldn't happen during scratching, only during verification which does not use cache)
         Coin coinPrev;
         if(!view.GetCoin(prevout, coinPrev)){
             return false;

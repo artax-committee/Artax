@@ -8,13 +8,13 @@ from test_framework.blocktools import *
 from test_framework.xax import *
 
 """
- This test specifically tests that inputs to transactions in the mempool are not used in staking.
+ This test specifically tests that inputs to transactions in the mempool are not used in scratching.
 """
-class ArtaxPOSConflictingStakingMempoolTxTest(BitcoinTestFramework):
+class ArtaxPOSConflictingScratchingMempoolTxTest(BitcoinTestFramework):
     def set_test_params(self):
         self.num_nodes = 2
         self.setup_clean_chain = True
-        self.extra_args = [['-staking=1', '-txindex=1', '-aggressive-staking'], ['-staking=1', '-txindex=1']]
+        self.extra_args = [['-scratching=1', '-txindex=1', '-aggressive-scratching'], ['-scratching=1', '-txindex=1']]
 
     def sync_disconnected_nodes(self, receive_from, sync_to):
         for block_number in range(sync_to.getblockcount(), receive_from.getblockcount()+1):
@@ -24,10 +24,10 @@ class ArtaxPOSConflictingStakingMempoolTxTest(BitcoinTestFramework):
 
     def run_test(self):
         disconnect_nodes(self.nodes[0], 1)
-        # First generate some blocks so we have 20 valid staking txs for the node we run the test on (node#0)
+        # First generate some blocks so we have 20 valid scratching txs for the node we run the test on (node#0)
         # We also mature three coinbases for the node that will orphan node#0s blocks
         # We contiously sync the blocks between the disconnected nodes, using getblock and submitblock.
-        staking_nodes_prevouts = []
+        scratching_nodes_prevouts = []
         self.nodes[1].generate(3)
         self.sync_disconnected_nodes(self.nodes[1], self.nodes[0])
         last_block_hashes = self.nodes[0].generate(20)
@@ -35,30 +35,30 @@ class ArtaxPOSConflictingStakingMempoolTxTest(BitcoinTestFramework):
         self.nodes[1].generate(500)
         self.sync_disconnected_nodes(self.nodes[1], self.nodes[0])
 
-        # Wait until all the (disconnected) nodes have started staking.
-        while not self.nodes[0].getstakinginfo()['staking']:
+        # Wait until all the (disconnected) nodes have started scratching.
+        while not self.nodes[0].getscratchinginfo()['scratching']:
             time.sleep(0.01)
-        print('staking...')
+        print('scratching...')
 
-        # Spend the only available staking tx for node#0, give the staker some time to start before sending the tx that spends the only available staking tx
+        # Spend the only available scratching tx for node#0, give the staker some time to start before sending the tx that spends the only available scratching tx
         txs = []
         for last_block_hash in last_block_hashes:
             last_coinbase = self.nodes[0].getblock(last_block_hash)['tx'][0]
-            staking_prevout = COutPoint(int(last_coinbase, 16), 0)
+            scratching_prevout = COutPoint(int(last_coinbase, 16), 0)
             tx = CTransaction()
-            tx.vin = [CTxIn(staking_prevout)]
+            tx.vin = [CTxIn(scratching_prevout)]
             tx.vout = [CTxOut(int((20000-0.01)*COIN), CScript([OP_DUP, OP_HASH160, hex_str_to_bytes(p2pkh_to_hex_hash(self.nodes[0].getnewaddress())), OP_EQUALVERIFY, OP_CHECKSIG]))]
             txs.append(rpc_sign_transaction(self.nodes[0], tx))
 
-        # We set the time so that the staker will find a valid staking block 3 timeslots away
+        # We set the time so that the staker will find a valid scratching block 3 timeslots away
         time_until_next_valid_block = int(self.nodes[0].getblock(self.nodes[0].getbestblockhash())['time'] - 16)
         self.nodes[0].setmocktime(time_until_next_valid_block)
 
         # Allow the xax staker some time to run (since we set a mocktime the time will not advance)
         time.sleep(80)
 
-        # Now the staker will have found a valid staking block and is waiting to publish it to the network
-        # Therefore we send the tx spending the block's staking tx
+        # Now the staker will have found a valid scratching block and is waiting to publish it to the network
+        # Therefore we send the tx spending the block's scratching tx
         for tx in txs:
             self.nodes[0].sendrawtransaction(bytes_to_hex_str(tx.serialize()))
         
@@ -103,4 +103,4 @@ class ArtaxPOSConflictingStakingMempoolTxTest(BitcoinTestFramework):
         assert_equal(int(self.nodes[0].getbalance()*COIN), int(20*(20000-0.01)*COIN))
         assert_equal(self.nodes[0].getbestblockhash(), self.nodes[1].getbestblockhash())
 if __name__ == '__main__':
-    ArtaxPOSConflictingStakingMempoolTxTest().main()
+    ArtaxPOSConflictingScratchingMempoolTxTest().main()

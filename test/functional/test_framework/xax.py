@@ -348,7 +348,7 @@ def collect_prevouts(node, amount=None):
         blocks.append(node.getblock(node.getblockhash(block_no)))
 
 
-    staking_prevouts = []
+    scratching_prevouts = []
     for unspent in node.listunspent():
         for block in blocks:
             if unspent['txid'] in block['tx']:
@@ -358,11 +358,11 @@ def collect_prevouts(node, amount=None):
             assert(False)
 
         if unspent['confirmations'] > COINBASE_MATURITY and (not amount or amount == unspent['amount']):
-            staking_prevouts.append((COutPoint(int(unspent['txid'], 16), unspent['vout']), int(unspent['amount']*COIN), tx_block_time))
-    return staking_prevouts
+            scratching_prevouts.append((COutPoint(int(unspent['txid'], 16), unspent['vout']), int(unspent['amount']*COIN), tx_block_time))
+    return scratching_prevouts
 
 
-def create_unsigned_pos_block(node, staking_prevouts, nTime=None):
+def create_unsigned_pos_block(node, scratching_prevouts, nTime=None):
     tip = node.getblock(node.getbestblockhash())
     if not nTime:
         current_time = int(time.time()) + 16
@@ -377,7 +377,7 @@ def create_unsigned_pos_block(node, staking_prevouts, nTime=None):
     block.hashStateRoot = int(tip['hashStateRoot'], 16)
     block.hashUTXORoot = int(tip['hashUTXORoot'], 16)
 
-    if not block.solve_stake(parent_block_stake_modifier, staking_prevouts):
+    if not block.solve_stake(parent_block_stake_modifier, scratching_prevouts):
         return None
 
     txout = node.gettxout(hex(block.prevoutStake.hash)[2:], block.prevoutStake.n)
@@ -407,8 +407,8 @@ def create_unsigned_pos_block(node, staking_prevouts, nTime=None):
     return (block, block_sig_key)
 
 
-def create_unsigned_mpos_block(node, staking_prevouts, nTime=None, block_fees=0):
-    mpos_block, block_sig_key = create_unsigned_pos_block(node, staking_prevouts, nTime)
+def create_unsigned_mpos_block(node, scratching_prevouts, nTime=None, block_fees=0):
+    mpos_block, block_sig_key = create_unsigned_pos_block(node, scratching_prevouts, nTime)
     tip = node.getblock(node.getbestblockhash())
 
     # The block reward is constant for regtest
@@ -443,21 +443,21 @@ def activate_mpos(node, use_cache=True):
     if not node.getblockcount():
         node.setmocktime(int(time.time()) - 1000000)
     node.generate(4490-node.getblockcount())
-    staking_prevouts = collect_prevouts(node)
+    scratching_prevouts = collect_prevouts(node)
 
     for i in range(510):
         nTime = (node.getblock(node.getbestblockhash())['time']+45) & 0xfffffff0
         node.setmocktime(nTime)
-        block, block_sig_key = create_unsigned_pos_block(node, staking_prevouts, nTime=nTime)
+        block, block_sig_key = create_unsigned_pos_block(node, scratching_prevouts, nTime=nTime)
         block.sign_block(block_sig_key)
         block.rehash()
         block_count = node.getblockcount()
         assert_equal(node.submitblock(bytes_to_hex_str(block.serialize())), None)
         assert_equal(node.getblockcount(), block_count+1)
 
-        # Remove the staking prevout so we don't accidently reuse it
-        for j in range(len(staking_prevouts)):
-            prevout = staking_prevouts[j]
+        # Remove the scratching prevout so we don't accidently reuse it
+        for j in range(len(scratching_prevouts)):
+            prevout = scratching_prevouts[j]
             if prevout[0].serialize() == block.prevoutStake.serialize():
-                staking_prevouts.pop(j)
+                scratching_prevouts.pop(j)
                 break

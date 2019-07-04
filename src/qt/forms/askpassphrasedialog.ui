@@ -116,12 +116,12 @@
       </widget>
      </item>
      <item row="5" column="0" colspan="2">
-      <widget class="QCheckBox" name="stakingCheckBox">
+      <widget class="QCheckBox" name="scratchingCheckBox">
        <property name="toolTip">
         <string>Serves to disable the trivial sendmoney when OS account compromised. Provides no real security.</string>
        </property>
        <property name="text">
-        <string>For staking only.</string>
+        <string>For scratching only.</string>
        </property>
       </widget>
      </item>

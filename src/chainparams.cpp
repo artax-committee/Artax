@@ -183,6 +183,8 @@ public:
                 {30000, uint256S("0xc9be0312d92d685094cc5d44ff2fd8874ceddfe2d4453c2fee421c0be869ab35")},
                 {40000, uint256S("0x2841d2a90e66173bdfcedae47ca5b19f699dcc714ffa32e712bfca86636ad6d8")},
                 {50000, uint256S("0x835459468fe9115a23f7fce5813c5a5279df78a84e2467837dc82137c91d36b8")},
+		{60000, uint256S("0xaeb7a51f7d2c7f8c1f4fdcc1f96496c4108d268ed2a0dd97a769b6eef7902c7b")},
+		{70000, uint256S("0x375825cce4a1878804b5b0156435f0b08cd189ddbf8a08f6b4c26474c2905adc")},
             }
         };
 

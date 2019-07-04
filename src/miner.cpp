@@ -431,7 +431,7 @@ bool BlockAssembler::AttemptToAddContractToBlock(CTxMemPool::txiter iter, uint64
     if (nTimeLimit != 0 && GetAdjustedTime() >= nTimeLimit - BYTECODE_TIME_BUFFER) {
         return false;
     }
-    if (gArgs.GetBoolArg("-disablecontractstaking", false))
+    if (gArgs.GetBoolArg("-disablecontractscratching", false))
     {
         return false;
     }
@@ -900,7 +900,7 @@ void ThreadStakeMiner(CWallet *pwallet, CConnman* connman)
             MilliSleep(10000);
         }
         //don't disable PoS mining for no connections if in regtest mode
-        if(!regtestMode && !gArgs.GetBoolArg("-emergencystaking", false)) {
+        if(!regtestMode && !gArgs.GetBoolArg("-emergencyscratching", false)) {
             while (connman->GetNodeCount(CConnman::CONNECTIONS_ALL) == 0 || IsInitialBlockDownload()) {
                 pwallet->m_last_coin_stake_search_interval = 0;
                 fTryToSync = true;
@@ -918,7 +918,7 @@ void ThreadStakeMiner(CWallet *pwallet, CConnman* connman)
         //
         // Create new block
         //
-        if(pwallet->HaveAvailableCoinsForStaking())
+        if(pwallet->HaveAvailableCoinsForScratching())
         {
             int64_t nTotalFees = 0;
             // First just create an empty block. No need to process transactions until we know we can create a block
@@ -978,7 +978,7 @@ void ThreadStakeMiner(CWallet *pwallet, CConnman* connman)
                                 break; //timestamp too late, so ignore
                             }
                             if (pblockfilled->GetBlockTime() > FutureDrift(GetAdjustedTime())) {
-                                if (gArgs.IsArgSet("-aggressive-staking")) {
+                                if (gArgs.IsArgSet("-aggressive-scratching")) {
                                     //if being agressive, then check more often to publish immediately when valid. This might allow you to find more blocks, 
                                     //but also increases the chance of broadcasting invalid blocks and getting DoS banned by nodes,
                                     //or receiving more stale/orphan blocks than normal. Use at your own risk.

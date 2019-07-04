@@ -15,11 +15,11 @@ class ArtaxIgnoreMPOSParticipantRewardTest(BitcoinTestFramework):
         self.setup_clean_chain = True
         self.num_nodes = 1
 
-    def remove_from_staking_prevouts(self, remove_prevout):
-        for j in range(len(self.staking_prevouts)):
-            prevout = self.staking_prevouts[j]
+    def remove_from_scratching_prevouts(self, remove_prevout):
+        for j in range(len(self.scratching_prevouts)):
+            prevout = self.scratching_prevouts[j]
             if prevout[0].serialize() == remove_prevout.serialize():
-                self.staking_prevouts.pop(j)
+                self.scratching_prevouts.pop(j)
                 break
 
     def run_test(self):
@@ -44,13 +44,13 @@ class ArtaxIgnoreMPOSParticipantRewardTest(BitcoinTestFramework):
 
         activate_mpos(self.node)
 
-        self.staking_prevouts = collect_prevouts(self.node)
-        # Only have staking outputs with nValue == 20000.0
+        self.scratching_prevouts = collect_prevouts(self.node)
+        # Only have scratching outputs with nValue == 20000.0
         # Since the rest of the code relies on this
         i = 0
-        while i < len(self.staking_prevouts):
-            if self.staking_prevouts[i][1] != 20000*COIN:
-                self.staking_prevouts.pop(i)
+        while i < len(self.scratching_prevouts):
+            if self.scratching_prevouts[i][1] != 20000*COIN:
+                self.scratching_prevouts.pop(i)
             i += 1
 
         nTime = int(time.time()) & 0xfffffff0
@@ -70,9 +70,9 @@ class ArtaxIgnoreMPOSParticipantRewardTest(BitcoinTestFramework):
         tx.vin = [make_vin_from_unspent(self.node, address=mpos_participant_addr)]
         tx.vout = [CTxOut(0, scriptPubKey=CScript([b"\x04", CScriptNum(4000000), CScriptNum(100000), b"\x00", hex_str_to_bytes(contract_address), OP_CALL]))]
         tx = rpc_sign_transaction(self.node, tx)
-        self.remove_from_staking_prevouts(tx.vin[0].prevout)
+        self.remove_from_scratching_prevouts(tx.vin[0].prevout)
 
-        block, block_sig_key = create_unsigned_mpos_block(self.node, self.staking_prevouts, block_fees=int(10000*COIN)-397897500000, nTime=nTime)
+        block, block_sig_key = create_unsigned_mpos_block(self.node, self.scratching_prevouts, block_fees=int(10000*COIN)-397897500000, nTime=nTime)
         block.vtx.append(tx)
         block.vtx[1].vout.append(CTxOut(397897500000, scriptPubKey=CScript([OP_DUP, OP_HASH160, mpos_participant_hpubkey, OP_EQUALVERIFY, OP_CHECKSIG])))
 

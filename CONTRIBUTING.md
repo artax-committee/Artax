@@ -14,17 +14,21 @@ purposes. As such there are repository "maintainers" who are responsible for upd
 
 -----------------------
 
--Active Artax Development Team (find us on Discord or Telegram)
+-Active Artax Development Team (find us on Discord, Wickr or Telegram)
 -
 -@osfera69 (lead)
 -@crypto_dude
 -@goosewobbler
 -@Respio
--@Shoduncat
--Railz
+-@cryptomaxsun
+-@TaliumDev
+-@yogi
+-@Ryless
+-@railz
+-@Robin73
 
 
--Contact the team on Discord or Telegram
+-Contact the team on Wickr, Keybase, Discord or Telegram
 
 Release Policy
 --------------

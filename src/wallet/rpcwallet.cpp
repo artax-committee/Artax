@@ -90,8 +90,8 @@ void EnsureWalletIsUnlocked(CWallet * const pwallet)
     if (pwallet->IsLocked()) {
         throw JSONRPCError(RPC_WALLET_UNLOCK_NEEDED, "Error: Please enter the wallet passphrase with walletpassphrase first.");
     }
-    if (pwallet->m_wallet_unlock_staking_only) {
-        throw JSONRPCError(RPC_WALLET_UNLOCK_NEEDED, "Error: Wallet is unlocked for staking only.");
+    if (pwallet->m_wallet_unlock_scratching_only) {
+        throw JSONRPCError(RPC_WALLET_UNLOCK_NEEDED, "Error: Wallet is unlocked for scratching only.");
     }
 }
 
@@ -483,9 +483,9 @@ static CTransactionRef SendMoney(CWallet * const pwallet, const CTxDestination &
         throw JSONRPCError(RPC_CLIENT_P2P_DISABLED, "Error: Peer-to-peer functionality missing or disabled");
     }
 
-    if (pwallet->m_wallet_unlock_staking_only)
+    if (pwallet->m_wallet_unlock_scratching_only)
     {
-        std::string strError = _("Error: Wallet unlocked for staking only, unable to create transaction.");
+        std::string strError = _("Error: Wallet unlocked for scratching only, unable to create transaction.");
         throw JSONRPCError(RPC_WALLET_ERROR, strError);
     }
 
@@ -3195,13 +3195,13 @@ static UniValue walletpassphrase(const JSONRPCRequest& request)
 
     if (request.fHelp || (pwallet->IsCrypted() && (request.params.size() < 2 || request.params.size() > 3))) {
         throw std::runtime_error(
-        	"walletpassphrase \"passphrase\" timeout stakingonly\n"
+        	"walletpassphrase \"passphrase\" timeout scratchingonly\n"
             "\nStores the wallet decryption key in memory for 'timeout' seconds.\n"
-        	"This is needed prior to performing transactions related to private keys such as sending XAX and staking\n"
+        	"This is needed prior to performing transactions related to private keys such as sending XAX and scratching\n"
             "\nArguments:\n"
             "1. \"passphrase\"     (string, required) The wallet passphrase\n"
             "2. timeout            (numeric, required) The time to keep the decryption key in seconds; capped at 100000000 (~3 years).\n"
-        	"3. staking only       (bool, optional, omitted=false, enabled=true) Unlock wallet for staking only.\n"
+        	"3. scratching only       (bool, optional, omitted=false, enabled=true) Unlock wallet for scratching only.\n"
             "\nNote:\n"
             "Issuing the walletpassphrase command while the wallet is already unlocked will set a new unlock\n"
             "time that overrides the old one.\n"
@@ -3210,7 +3210,7 @@ static UniValue walletpassphrase(const JSONRPCRequest& request)
             + HelpExampleCli("walletpassphrase", "\"my pass phrase\" 60") +
             "\nLock the wallet again (before 60 seconds)\n"
             + HelpExampleCli("walletlock", "") +
-			"\nUnlock the wallet for staking only, for a long time\n"
+			"\nUnlock the wallet for scratching only, for a long time\n"
 			+ HelpExampleCli("walletpassphrase","\"my pass phrase\" 99999999 true") +
             "\nAs json rpc call\n"
             + HelpExampleRpc("walletpassphrase", "\"my pass phrase\", 60")
@@ -3246,23 +3246,23 @@ static UniValue walletpassphrase(const JSONRPCRequest& request)
 
     if (strWalletPass.length() > 0)
     {
-        // Used to restore m_wallet_unlock_staking_only value in case of unlock failure 
-        bool tmpStakingOnly = pwallet->m_wallet_unlock_staking_only;
+        // Used to restore m_wallet_unlock_scratching_only value in case of unlock failure 
+        bool tmpScratchingOnly = pwallet->m_wallet_unlock_scratching_only;
 
         // ppcoin: if user OS account compromised prevent trivial sendmoney commands
         if (request.params.size() > 2)
-            pwallet->m_wallet_unlock_staking_only = request.params[2].get_bool();
+            pwallet->m_wallet_unlock_scratching_only = request.params[2].get_bool();
         else
-            pwallet->m_wallet_unlock_staking_only = false;
+            pwallet->m_wallet_unlock_scratching_only = false;
     
         if (!pwallet->Unlock(strWalletPass)) {
-            pwallet->m_wallet_unlock_staking_only = tmpStakingOnly;
+            pwallet->m_wallet_unlock_scratching_only = tmpScratchingOnly;
             throw JSONRPCError(RPC_WALLET_PASSPHRASE_INCORRECT, "Error: The wallet passphrase entered was incorrect.");
         }
     }
     else
         throw std::runtime_error(
-        	"walletpassphrase <passphrase> <timeout> <stakingonly>\n"
+        	"walletpassphrase <passphrase> <timeout> <scratchingonly>\n"
             "Stores the wallet decryption key in memory for <timeout> seconds.");
 
     pwallet->TopUpKeyPool();
@@ -3850,7 +3850,7 @@ static UniValue loadwallet(const JSONRPCRequest& request)
     wallet->postInitProcess();
 
     // Mine proof-of-stake blocks in the background
-    if (gArgs.GetBoolArg("-staking", DEFAULT_STAKE)) {
+    if (gArgs.GetBoolArg("-scratching", DEFAULT_STAKE)) {
         CConnman& connman = *g_connman;
         wallet->StartStake(&connman);
     }
@@ -3909,7 +3909,7 @@ static UniValue createwallet(const JSONRPCRequest& request)
     wallet->postInitProcess();
 
     // Mine proof-of-stake blocks in the background
-    if (gArgs.GetBoolArg("-staking", DEFAULT_STAKE)) {
+    if (gArgs.GetBoolArg("-scratching", DEFAULT_STAKE)) {
         CConnman& connman = *g_connman;
         wallet->StartStake(&connman);
     }
@@ -3958,7 +3958,7 @@ static UniValue unloadwallet(const JSONRPCRequest& request)
     }
     UnregisterValidationInterface(wallet.get());
 
-    // Stop wallet from staking
+    // Stop wallet from scratching
     wallet->StopStake();
 
     // The wallet can be in use so it's not possible to explicitly unload here.
@@ -5542,7 +5542,7 @@ static const CRPCCommand commands[] =
     { "wallet",             "unloadwallet",                     &unloadwallet,                  {"wallet_name"} },
     { "wallet",             "walletlock",                       &walletlock,                    {} },
     { "wallet",             "walletpassphrasechange",           &walletpassphrasechange,        {"oldpassphrase","newpassphrase"} },
-    { "wallet",             "walletpassphrase",                 &walletpassphrase,              {"passphrase","timeout", "stakingonly"} },
+    { "wallet",             "walletpassphrase",                 &walletpassphrase,              {"passphrase","timeout", "scratchingonly"} },
     { "wallet",             "removeprunedfunds",                &removeprunedfunds,             {"txid"} },
     { "wallet",             "rescanblockchain",                 &rescanblockchain,              {"start_height", "stop_height"} },
     { "wallet",             "sethdseed",                        &sethdseed,                     {"newkeypool","seed"} },

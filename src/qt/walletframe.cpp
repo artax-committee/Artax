@@ -255,7 +255,7 @@ void WalletFrame::lockWallet()
     if (walletView)
     {
         walletView->lockWallet();
-        walletView->getWalletModel()->setWalletUnlockStakingOnly(false);
+        walletView->getWalletModel()->setWalletUnlockScratchingOnly(false);
     }
 }
 

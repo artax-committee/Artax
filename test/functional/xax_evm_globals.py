@@ -18,7 +18,7 @@ class ArtaxEVMGlobalsTest(BitcoinTestFramework):
     def set_test_params(self):
         self.setup_clean_chain = True
         self.num_nodes = 2
-        self.extra_args = [['-staking=1'], []]
+        self.extra_args = [['-scratching=1'], []]
 
 
 
@@ -27,7 +27,7 @@ class ArtaxEVMGlobalsTest(BitcoinTestFramework):
         assert_equal(out['executionResult']['excepted'], 'None')
         return out['executionResult']['output']
 
-    def verify_evm_globals_test(self, use_staking=False):
+    def verify_evm_globals_test(self, use_scratching=False):
         sender = self.node.getnewaddress()
         sender_pkh = p2pkh_to_hex_hash(sender)
         self.node.sendtoaddress(sender, 1)
@@ -50,7 +50,7 @@ class ArtaxEVMGlobalsTest(BitcoinTestFramework):
         """
         self.node.sendtocontract(self.contract_address, "cc5ea9ad", 1, 20000000, XAX_MIN_GAS_PRICE/COIN, sender)
 
-        if use_staking:
+        if use_scratching:
             for n in self.nodes:
                 n.setmocktime((self.node.getblock(self.node.getbestblockhash())['time']+100) & 0xfffffff0)
 
@@ -192,7 +192,7 @@ class ArtaxEVMGlobalsTest(BitcoinTestFramework):
         self.contract_address = self.node.createcontract(bytecode)['address']
         print('verify globals in PoW blocks')
 
-        self.verify_evm_globals_test(use_staking=False)
+        self.verify_evm_globals_test(use_scratching=False)
         self.sync_all()
         
         self.node.generate(257)
@@ -202,7 +202,7 @@ class ArtaxEVMGlobalsTest(BitcoinTestFramework):
             n.setmocktime((self.node.getblock(self.node.getbestblockhash())['time']+100) & 0xfffffff0)
 
         print('verify globals in PoS blocks')
-        self.verify_evm_globals_test(use_staking=True)
+        self.verify_evm_globals_test(use_scratching=True)
         self.sync_all()
 
         self.node.generate(257)
@@ -215,7 +215,7 @@ class ArtaxEVMGlobalsTest(BitcoinTestFramework):
         for n in self.nodes:
             n.setmocktime((self.node.getblock(self.node.getbestblockhash())['time']+100) & 0xfffffff0)
 
-        self.verify_evm_globals_test(use_staking=True)
+        self.verify_evm_globals_test(use_scratching=True)
         self.sync_all()
 
 if __name__ == '__main__':

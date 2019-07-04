@@ -5,7 +5,7 @@
                 \____|____/____|___/ |____|\____|____/___/\__\
                                      
 
-V1.0.1 - Artax PoS Chain [NO ICO] No Pre Sale.
+V1.0.2 - Artax PoS Chain [NO ICO] No Pre Sale.
 The only way you could take part in this utility chain originally was by mining. As the committee changed hands over the time, so did the vision and roadmap. 
 
 Artax is a Powerful Node-Based PoS-based cryptocurrency. Artax is run by a volunteer, non-profit committee.
@@ -26,11 +26,14 @@ A community coin by the community, for the community.
 
 | Site | link |
 |:-----------|:-----------|
+| Telegram | https://t.co/Qf6ZFYLPrZ |
 | Bitcointalk | https://bitcointalk.org/index.php?topic=3267175.0 |
 | Twitter  | https://twitter.com/ArtaxCoin |
-| Discord  | https://discord.gg/xyHnuZu |
+| Discord  | https://discord.gg/pMhBc3 |
 | Website  | https://www.artaxcoin.org |
-| Telegram | https://t.co/Qf6ZFYLPrZ |
+
+
+Premine held here: AWRAPxkSZGBwdWsdwgNa7PhBoaUbHqPUq6 (@osfera69 - lead)
 
 
 Contributing to Artax (XAX)
@@ -85,7 +88,7 @@ For more information please visit the website:
 
 https://www.artaxcoin.org
 
-
+Join us on Telegram (Main), Discord or our development Wickr Server.
 
 
 DISCLAIMER:

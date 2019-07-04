@@ -28,11 +28,11 @@ class ArtaxAssignMPoSFeesToGasRefundTest(BitcoinTestFramework):
         address = self.node.createcontract(bytecode)['address']
         self.node.generate(1)
 
-        staking_prevouts = collect_prevouts(self.node, amount=20000)
+        scratching_prevouts = collect_prevouts(self.node, amount=20000)
         tip = self.node.getblock(self.node.getbestblockhash())
         t = (tip['time'] + 0x30) & 0xfffffff0
         self.node.setmocktime(t)
-        block, block_sig_key = create_unsigned_mpos_block(self.node, staking_prevouts, nTime=t, block_fees=2102200000)
+        block, block_sig_key = create_unsigned_mpos_block(self.node, scratching_prevouts, nTime=t, block_fees=2102200000)
         block.hashUTXORoot = int(tip['hashUTXORoot'], 16)
         block.hashStateRoot = int(tip['hashStateRoot'], 16)
 

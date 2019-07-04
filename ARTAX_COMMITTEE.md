@@ -1,4 +1,4 @@
-ARTAX COMMITTEE   - Artax [NO ICO] Community driven coin.
+ARTAX COMMITTEE   - Artax [NO ICO]-[NO PRESALE] Community driven coin. Virgin PoW Launch
 
 Establishment of steering committee for proposal implementation and planning
 

@@ -791,7 +791,7 @@ private:
     const CBlockIndex* m_last_block_processed = nullptr;
 
     /**
-     * Wallet staking coins.
+     * Wallet scratching coins.
      */
     boost::thread_group* stakeThread = nullptr;
     void StakeArtaxs(bool fStake, CConnman* connman);
@@ -872,15 +872,15 @@ public:
     //! check whether we are allowed to upgrade (or already support) to the named feature
     bool CanSupportFeature(enum WalletFeature wf) const EXCLUSIVE_LOCKS_REQUIRED(cs_wallet) { AssertLockHeld(cs_wallet); return nWalletMaxVersion >= wf; }
 
-    //! select coins for staking from the available coins for staking.
-    bool SelectCoinsForStaking(CAmount& nTargetValue, std::set<std::pair<const CWalletTx*,unsigned int> >& setCoinsRet, CAmount& nValueRet) const;
+    //! select coins for scratching from the available coins for scratching.
+    bool SelectCoinsForScratching(CAmount& nTargetValue, std::set<std::pair<const CWalletTx*,unsigned int> >& setCoinsRet, CAmount& nValueRet) const;
 	
     /**
      * populate vCoins with vector of available COutputs.
      */
-    void AvailableCoinsForStaking(std::vector<COutput>& vCoins) const;
+    void AvailableCoinsForScratching(std::vector<COutput>& vCoins) const;
     void AvailableCoins(std::vector<COutput>& vCoins, bool fOnlySafe=true, const CCoinControl *coinControl = nullptr, const CAmount& nMinimumAmount = 1, const CAmount& nMaximumAmount = MAX_MONEY, const CAmount& nMinimumSumAmount = MAX_MONEY, const uint64_t nMaximumCount = 0, const int nMinDepth = 0, const int nMaxDepth = 9999999) const EXCLUSIVE_LOCKS_REQUIRED(cs_wallet);
-    bool HaveAvailableCoinsForStaking() const;
+    bool HaveAvailableCoinsForScratching() const;
 
     /**
      * Return list of available coins and locked coins grouped by non-change output address.
@@ -1054,10 +1054,10 @@ public:
     CFeeRate m_discard_rate{DEFAULT_DISCARD_FEE};
     OutputType m_default_address_type{DEFAULT_ADDRESS_TYPE};
     OutputType m_default_change_type{DEFAULT_CHANGE_TYPE};
-    // optional setting to unlock wallet for staking only
+    // optional setting to unlock wallet for scratching only
     // serves to disable the trivial sendmoney when OS account compromised
     // provides no real security
-    std::atomic<bool> m_wallet_unlock_staking_only{false};
+    std::atomic<bool> m_wallet_unlock_scratching_only{false};
     bool m_not_use_change_address{DEFAULT_NOT_USE_CHANGE_ADDRESS};
     CAmount m_reserve_balance{DEFAULT_RESERVE_BALANCE};
     int64_t m_last_coin_stake_search_time{0};
@@ -1308,10 +1308,10 @@ public:
     /* Remove token entry from the wallet */
     bool RemoveTokenEntry(const uint256& tokenHash, bool fFlushOnClose=true);
 
-    /* Start staking xaxs */
+    /* Start scratching xaxs */
     void StartStake(CConnman* connman) { StakeArtaxs(true, connman); }
 
-    /* Stop staking xaxs */
+    /* Stop scratching xaxs */
     void StopStake() { StakeArtaxs(false, 0); }
 
     /* Clean token transaction entries in the wallet */

@@ -4114,7 +4114,7 @@ bool GetBlockPublicKey(const CBlock& block, std::vector<unsigned char>& vchPubKe
     else
     {
         // Block signing key also can be encoded in the nonspendable output
-        // This allows to not pollute UTXO set with useless outputs e.g. in case of multisig staking
+        // This allows to not pollute UTXO set with useless outputs e.g. in case of multisig scratching
 
         const CScript& script = txout.scriptPubKey;
         CScript::const_iterator pc = script.begin();

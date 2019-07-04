@@ -562,7 +562,7 @@ WalletModel::UnlockContext WalletModel::requestUnlock()
 {
     bool was_locked = getEncryptionStatus() == Locked;
 
-    if ((!was_locked) && getWalletUnlockStakingOnly())
+    if ((!was_locked) && getWalletUnlockScratchingOnly())
     {
        setWalletLocked(true);
        was_locked = getEncryptionStatus() == Locked;
@@ -576,19 +576,19 @@ WalletModel::UnlockContext WalletModel::requestUnlock()
     // If wallet is still locked, unlock was failed or cancelled, mark context as invalid
     bool valid = getEncryptionStatus() != Locked;
 
-    return UnlockContext(this, valid, was_locked && !getWalletUnlockStakingOnly());
+    return UnlockContext(this, valid, was_locked && !getWalletUnlockScratchingOnly());
 }
 
 WalletModel::UnlockContext::UnlockContext(WalletModel *_wallet, bool _valid, bool _relock):
         wallet(_wallet),
         valid(_valid),
         relock(_relock),
-        stakingOnly(false)
+        scratchingOnly(false)
 {
     if(!relock)
     {
-        stakingOnly = wallet->getWalletUnlockStakingOnly();
-        wallet->setWalletUnlockStakingOnly(false);
+        scratchingOnly = wallet->getWalletUnlockScratchingOnly();
+        wallet->setWalletUnlockScratchingOnly(false);
     }
 }
 
@@ -601,7 +601,7 @@ WalletModel::UnlockContext::~UnlockContext()
 
     if(!relock)
     {
-        wallet->setWalletUnlockStakingOnly(stakingOnly);
+        wallet->setWalletUnlockScratchingOnly(scratchingOnly);
         wallet->updateStatus();
     }
 }
@@ -733,14 +733,14 @@ uint64_t WalletModel::getStakeWeight()
     return nWeight;
 }
 
-bool WalletModel::getWalletUnlockStakingOnly()
+bool WalletModel::getWalletUnlockScratchingOnly()
 {
-    return m_wallet->getWalletUnlockStakingOnly();
+    return m_wallet->getWalletUnlockScratchingOnly();
 }
 
-void WalletModel::setWalletUnlockStakingOnly(bool unlock)
+void WalletModel::setWalletUnlockScratchingOnly(bool unlock)
 {
-    m_wallet->setWalletUnlockStakingOnly(unlock);
+    m_wallet->setWalletUnlockScratchingOnly(unlock);
 }
 
 void WalletModel::checkCoinAddressesChanged()

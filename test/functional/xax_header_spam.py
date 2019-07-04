@@ -26,14 +26,14 @@ class ArtaxHeaderSpamTest(BitcoinTestFramework):
         self.setup_clean_chain = True
         self.num_nodes = 2
 
-    def _remove_from_staking_prevouts(self, remove_prevout):
-        for j in range(len(self.staking_prevouts)):
-            prevout = self.staking_prevouts[j]
+    def _remove_from_scratching_prevouts(self, remove_prevout):
+        for j in range(len(self.scratching_prevouts)):
+            prevout = self.scratching_prevouts[j]
             if prevout[0].serialize() == remove_prevout.serialize():
-                self.staking_prevouts.pop(j)
+                self.scratching_prevouts.pop(j)
                 break
 
-    def _create_pos_block(self, node, staking_prevouts, prevBlockHash=None, nTime=None, tip=None):
+    def _create_pos_block(self, node, scratching_prevouts, prevBlockHash=None, nTime=None, tip=None):
         if not tip:
             tip = node.getblock(prevBlockHash if prevBlockHash else node.getbestblockhash())
 
@@ -50,7 +50,7 @@ class ArtaxHeaderSpamTest(BitcoinTestFramework):
         block.hashStateRoot = int(tip['hashStateRoot'], 16)
         block.hashUTXORoot = int(tip['hashUTXORoot'], 16)
 
-        if not block.solve_stake(parent_block_stake_modifier, staking_prevouts):
+        if not block.solve_stake(parent_block_stake_modifier, scratching_prevouts):
             return None
 
         txout = node.gettxout(hex(block.prevoutStake.hash)[2:], block.prevoutStake.n)
@@ -86,8 +86,8 @@ class ArtaxHeaderSpamTest(BitcoinTestFramework):
     def close_p2p_connection(self):
         self.node.disconnect_p2ps()
 
-    def _create_pos_header(self, node, staking_prevouts, prevBlockHash, nTime=None):
-        return CBlockHeader(self._create_pos_block(node, staking_prevouts, prevBlockHash, nTime)[0])
+    def _create_pos_header(self, node, scratching_prevouts, prevBlockHash, nTime=None):
+        return CBlockHeader(self._create_pos_block(node, scratching_prevouts, prevBlockHash, nTime)[0])
 
     def assert_chain_tip_rejected(self, header_hash):
         tips = self.node.getchaintips()
@@ -103,27 +103,27 @@ class ArtaxHeaderSpamTest(BitcoinTestFramework):
         assert(False)
 
     def cannot_submit_header_before_rolling_checkpoint_test(self):
-        block_header = self._create_pos_header(self.node, self.staking_prevouts, self.node.getblockhash(self.node.getblockcount()-501), int(time.time())&0xfffffff0)
+        block_header = self._create_pos_header(self.node, self.scratching_prevouts, self.node.getblockhash(self.node.getblockcount()-501), int(time.time())&0xfffffff0)
         block_header.rehash()
         msg = msg_headers()
         msg.headers.extend([block_header])
         self.p2p_node.send_message(msg)
         time.sleep(1)
         self.assert_chain_tip_rejected(block_header.hash)
-        self._remove_from_staking_prevouts(block_header.prevoutStake)
+        self._remove_from_scratching_prevouts(block_header.prevoutStake)
 
     def can_submit_header_after_rolling_checkpoint_test(self):
-        block_header = self._create_pos_header(self.node, self.staking_prevouts, self.node.getblockhash(self.node.getblockcount()-500))
+        block_header = self._create_pos_header(self.node, self.scratching_prevouts, self.node.getblockhash(self.node.getblockcount()-500))
         block_header.rehash()
         msg = msg_headers()
         msg.headers.extend([block_header])
         self.p2p_node.send_message(msg)
         time.sleep(1)
         self.assert_chain_tip_accepted(block_header.hash)
-        self._remove_from_staking_prevouts(block_header.prevoutStake)
+        self._remove_from_scratching_prevouts(block_header.prevoutStake)
 
     def cannot_submit_header_oversized_signature_test(self):
-        block_header = self._create_pos_header(self.node, self.staking_prevouts, self.node.getblockhash(self.node.getblockcount()-500))
+        block_header = self._create_pos_header(self.node, self.scratching_prevouts, self.node.getblockhash(self.node.getblockcount()-500))
         block_header.vchBlockSig = b'x'*7999812
         block_header.rehash()
         msg = msg_headers()
@@ -131,10 +131,10 @@ class ArtaxHeaderSpamTest(BitcoinTestFramework):
         self.p2p_node.send_message(msg)
         time.sleep(1)
         self.assert_chain_tip_rejected(block_header.hash)
-        self._remove_from_staking_prevouts(block_header.prevoutStake)
+        self._remove_from_scratching_prevouts(block_header.prevoutStake)
 
     def cannot_submit_invalid_prevout_test(self):
-        block_header = self._create_pos_header(self.node, self.staking_prevouts, self.node.getblockhash(self.node.getblockcount()-500))
+        block_header = self._create_pos_header(self.node, self.scratching_prevouts, self.node.getblockhash(self.node.getblockcount()-500))
         block_header.prevoutStake.n = 0xffff
         block_header.rehash()
         msg = msg_headers()
@@ -142,13 +142,13 @@ class ArtaxHeaderSpamTest(BitcoinTestFramework):
         self.p2p_node.send_message(msg)
         time.sleep(1)
         self.assert_chain_tip_rejected(block_header.hash)
-        self._remove_from_staking_prevouts(block_header.prevoutStake)
+        self._remove_from_scratching_prevouts(block_header.prevoutStake)
 
     # Constant height header spam cause ban (in our case disconnect) after a max of 500 headers
     def dos_protection_triggered_via_spam_on_same_height_test(self):
         self.start_p2p_connection()
 
-        block_header = self._create_pos_header(self.node, self.staking_prevouts, self.node.getblockhash(self.node.getblockcount()-500))
+        block_header = self._create_pos_header(self.node, self.scratching_prevouts, self.node.getblockhash(self.node.getblockcount()-500))
         block_header.rehash()
         for i in range(500):
             msg = msg_headers()
@@ -162,7 +162,7 @@ class ArtaxHeaderSpamTest(BitcoinTestFramework):
         self.start_p2p_connection()
 
         for i in range(1504):
-            block_header = self._create_pos_header(self.node, self.staking_prevouts, self.node.getblockhash(self.node.getblockcount()-500+(i%500)))
+            block_header = self._create_pos_header(self.node, self.scratching_prevouts, self.node.getblockhash(self.node.getblockcount()-500+(i%500)))
             block_header.rehash()
             msg = msg_headers()
             block_header.nNonce = i
@@ -179,11 +179,11 @@ class ArtaxHeaderSpamTest(BitcoinTestFramework):
         disconnect_nodes(self.node, 1)
         block_time = int(time.time() - 10*24*60*60) & 0xfffffff0
         for i in range(502):
-            block, block_sig_key = create_unsigned_pos_block(self.node, self.staking_prevouts, block_time)
+            block, block_sig_key = create_unsigned_pos_block(self.node, self.scratching_prevouts, block_time)
             block.sign_block(block_sig_key)
             self.node.submitblock(bytes_to_hex_str(block.serialize()))
             block_time += 0x10
-            self._remove_from_staking_prevouts(block.prevoutStake)
+            self._remove_from_scratching_prevouts(block.prevoutStake)
         connect_nodes(self.node, 1)
         sync_blocks(self.nodes)
 
@@ -196,7 +196,7 @@ class ArtaxHeaderSpamTest(BitcoinTestFramework):
         recent_unspents = [unspent for unspent in self.node.listunspent() if unspent['confirmations'] < 2*COINBASE_MATURITY and unspent['confirmations'] > COINBASE_MATURITY+40]
 
         for i in range(20):
-            block, block_sig_key = self._create_pos_block(self.node, self.staking_prevouts, tip=tip)
+            block, block_sig_key = self._create_pos_block(self.node, self.scratching_prevouts, tip=tip)
             for j in range(19):
                 unspent = recent_unspents.pop(0)
                 tx = CTransaction()
@@ -208,7 +208,7 @@ class ArtaxHeaderSpamTest(BitcoinTestFramework):
             block.sign_block(block_sig_key)
             block.rehash()
             blocks.append(block)
-            self._remove_from_staking_prevouts(block.prevoutStake)
+            self._remove_from_scratching_prevouts(block.prevoutStake)
             tip['height'] += 1
             tip['hash'] = block.hash
             tip['time'] += 0x10
@@ -232,7 +232,7 @@ class ArtaxHeaderSpamTest(BitcoinTestFramework):
         self.start_p2p_connection()
 
         tip = self.node.getblock(self.node.getblockhash(self.node.getblockcount()-1))
-        block, block_sig_key = self._create_pos_block(self.node, self.staking_prevouts, tip=tip)
+        block, block_sig_key = self._create_pos_block(self.node, self.scratching_prevouts, tip=tip)
         recent_unspents = [unspent for unspent in self.node.listunspent() if unspent['confirmations'] < 2*COINBASE_MATURITY]
         for i in range(19):
             unspent = recent_unspents.pop(0)
@@ -261,7 +261,7 @@ class ArtaxHeaderSpamTest(BitcoinTestFramework):
         disconnect_nodes(self.node, 1)
         self.node.setmocktime(int(time.time() - 100*24*60*60))
         self.node.generate(1500)
-        self.staking_prevouts = collect_prevouts(self.node)
+        self.scratching_prevouts = collect_prevouts(self.node)
         self.node.generate(500)
         self.node.setmocktime(0)
         self.start_p2p_connection()

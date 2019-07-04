@@ -273,12 +273,12 @@ static UniValue getmininginfo(const JSONRPCRequest& request)
     return obj;
 }
 
-static UniValue getstakinginfo(const JSONRPCRequest& request)
+static UniValue getscratchinginfo(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() != 0)
         throw std::runtime_error(
-            "getstakinginfo\n"
-            "Returns an object containing staking-related information.");
+            "getscratchinginfo\n"
+            "Returns an object containing scratching-related information.");
 
     LOCK(cs_main);
 
@@ -296,15 +296,15 @@ static UniValue getstakinginfo(const JSONRPCRequest& request)
 #endif
 
     uint64_t nNetworkWeight = GetPoSKernelPS();
-    bool staking = lastCoinStakeSearchInterval && nWeight;
+    bool scratching = lastCoinStakeSearchInterval && nWeight;
     const Consensus::Params& consensusParams = Params().GetConsensus();
     int64_t nTargetSpacing = consensusParams.nPowTargetSpacing;
-    uint64_t nExpectedTime = staking ? (nTargetSpacing * nNetworkWeight / nWeight) : 0;
+    uint64_t nExpectedTime = scratching ? (nTargetSpacing * nNetworkWeight / nWeight) : 0;
 
     UniValue obj(UniValue::VOBJ);
 
-    obj.pushKV("enabled", gArgs.GetBoolArg("-staking", true));
-    obj.pushKV("staking", staking);
+    obj.pushKV("enabled", gArgs.GetBoolArg("-scratching", true));
+    obj.pushKV("scratching", scratching);
     obj.pushKV("errors", GetWarnings("statusbar"));
 
     obj.pushKV("currentblocktx", (uint64_t)nLastBlockTx);
@@ -1039,7 +1039,7 @@ static const CRPCCommand commands[] =
     { "mining",             "getblocktemplate",       &getblocktemplate,       {"template_request"} },
     { "mining",             "submitblock",            &submitblock,            {"hexdata","dummy"} },
     { "mining",             "getsubsidy",             &getsubsidy,             {"height"} },
-    { "mining",             "getstakinginfo",         &getstakinginfo,         {} },
+    { "mining",             "getscratchinginfo",         &getscratchinginfo,         {} },
 
     { "generating",         "generatetoaddress",      &generatetoaddress,      {"nblocks","address","maxtries"} },
 

@@ -2572,7 +2572,7 @@ void CWallet::AvailableCoins(std::vector<COutput> &vCoins, bool fOnlySafe, const
     }
 }
 
-void CWallet::AvailableCoinsForStaking(std::vector<COutput>& vCoins) const
+void CWallet::AvailableCoinsForScratching(std::vector<COutput>& vCoins) const
 {
     vCoins.clear();
 
@@ -2606,10 +2606,10 @@ void CWallet::AvailableCoinsForStaking(std::vector<COutput>& vCoins) const
     }
 }
 
-bool CWallet::HaveAvailableCoinsForStaking() const
+bool CWallet::HaveAvailableCoinsForScratching() const
 {
     std::vector<COutput> vCoins;
-    AvailableCoinsForStaking(vCoins);
+    AvailableCoinsForScratching(vCoins);
     return vCoins.size() > 0;
 }
 
@@ -2844,10 +2844,10 @@ bool CWallet::SelectCoins(const std::vector<COutput>& vAvailableCoins, const CAm
     return res;
 }
 
-bool CWallet::SelectCoinsForStaking(CAmount& nTargetValue, std::set<std::pair<const CWalletTx*,unsigned int> >& setCoinsRet, CAmount& nValueRet) const
+bool CWallet::SelectCoinsForScratching(CAmount& nTargetValue, std::set<std::pair<const CWalletTx*,unsigned int> >& setCoinsRet, CAmount& nValueRet) const
 {
     std::vector<COutput> vCoins;
-    AvailableCoinsForStaking(vCoins);
+    AvailableCoinsForScratching(vCoins);
 
     setCoinsRet.clear();
     nValueRet = 0;
@@ -3440,7 +3440,7 @@ uint64_t CWallet::GetStakeWeight() const
     CAmount nValueIn = 0;
 
     CAmount nTargetValue = nBalance - m_reserve_balance;
-    if (!SelectCoinsForStaking(nTargetValue, setCoins, nValueIn))
+    if (!SelectCoinsForScratching(nTargetValue, setCoins, nValueIn))
         return 0;
 
     if (setCoins.empty())
@@ -3486,7 +3486,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, con
 
     // Select coins with suitable depth
     CAmount nTargetValue = nBalance - m_reserve_balance;
-    if (!SelectCoinsForStaking(nTargetValue, setCoins, nValueIn))
+    if (!SelectCoinsForScratching(nTargetValue, setCoins, nValueIn))
         return false;
 
     if (setCoins.empty())

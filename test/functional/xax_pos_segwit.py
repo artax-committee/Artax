@@ -15,7 +15,7 @@ class ArtaxPOSSegwitTest(BitcoinTestFramework):
         self.setup_clean_chain = True
         self.num_nodes = 1
 
-    def create_unsigned_pos_block(self, staking_prevouts, nTime):
+    def create_unsigned_pos_block(self, scratching_prevouts, nTime):
 
         best_block_hash = self.node.getbestblockhash()
         block_height = self.node.getblockcount()
@@ -31,7 +31,7 @@ class ArtaxPOSSegwitTest(BitcoinTestFramework):
         coinbase.rehash()
         block = create_block(int(best_block_hash, 16), coinbase, nTime)
         block.hashPrevBlock = int(best_block_hash, 16)
-        if not block.solve_stake(parent_block_stake_modifier, staking_prevouts):
+        if not block.solve_stake(parent_block_stake_modifier, scratching_prevouts):
             return None
 
         # create a new private key used for block signing.
@@ -55,13 +55,13 @@ class ArtaxPOSSegwitTest(BitcoinTestFramework):
 
         return (block, block_sig_key)
 
-    def collect_staking_prevouts(self):
+    def collect_scratching_prevouts(self):
         blocks = []
         for block_number in range(self.node.getblockcount()):
             block_hash = self.node.getblockhash(block_number)
             blocks.append(self.node.getblock(block_hash))
 
-        staking_prevouts = []
+        scratching_prevouts = []
 
         for unspent in self.node.listunspent():
             for block in blocks:
@@ -72,16 +72,16 @@ class ArtaxPOSSegwitTest(BitcoinTestFramework):
                 assert(False)
 
             if unspent['confirmations'] > COINBASE_MATURITY:
-                staking_prevouts.append((COutPoint(int(unspent['txid'], 16), unspent['vout']), int(unspent['amount'])*COIN, tx_block_time))
+                scratching_prevouts.append((COutPoint(int(unspent['txid'], 16), unspent['vout']), int(unspent['amount'])*COIN, tx_block_time))
 
-        return staking_prevouts
+        return scratching_prevouts
 
     def run_test(self):
         self.node = self.nodes[0]
         self.node.setmocktime(int(time.time()) - 2*COINBASE_MATURITY)
         self.node.generate(50+COINBASE_MATURITY)
 
-        staking_prevouts = self.collect_staking_prevouts()
+        scratching_prevouts = self.collect_scratching_prevouts()
 
         # Create a tx that will be spent by the segwit parent tx
         tx = CTransaction()
@@ -126,7 +126,7 @@ class ArtaxPOSSegwitTest(BitcoinTestFramework):
 
 
         t = int(time.time()) & 0xfffffff0
-        (block, block_sig_key) = self.create_unsigned_pos_block(staking_prevouts, nTime=t)
+        (block, block_sig_key) = self.create_unsigned_pos_block(scratching_prevouts, nTime=t)
         block.vtx.extend([parent_tx, child_tx])
 
         # Add the witness commitment to the coinbase,

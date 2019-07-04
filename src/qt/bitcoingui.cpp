@@ -156,7 +156,7 @@ BitcoinGUI::BitcoinGUI(interfaces::Node& node, const PlatformStyle *_platformSty
     labelProxyIcon = new QLabel();
     connectionsControl = new GUIUtil::ClickableLabel();
     labelBlocksIcon = new GUIUtil::ClickableLabel();
-    labelStakingIcon = new QLabel();
+    labelScratchingIcon = new QLabel();
     if(enableWallet)
     {
         frameBlocksLayout->addStretch();
@@ -167,20 +167,20 @@ BitcoinGUI::BitcoinGUI(interfaces::Node& node, const PlatformStyle *_platformSty
     }
     frameBlocksLayout->addWidget(labelProxyIcon);
     frameBlocksLayout->addStretch();
-    frameBlocksLayout->addWidget(labelStakingIcon);
+    frameBlocksLayout->addWidget(labelScratchingIcon);
     frameBlocksLayout->addStretch();
     frameBlocksLayout->addWidget(connectionsControl);
     frameBlocksLayout->addStretch();
     frameBlocksLayout->addWidget(labelBlocksIcon);
     frameBlocksLayout->addStretch();
 
-    if (gArgs.GetBoolArg("-staking", true))
+    if (gArgs.GetBoolArg("-scratching", true))
     {
-        QTimer *timerStakingIcon = new QTimer(labelStakingIcon);
-        connect(timerStakingIcon, SIGNAL(timeout()), this, SLOT(updateStakingIcon()));
-        timerStakingIcon->start(1000);
+        QTimer *timerScratchingIcon = new QTimer(labelScratchingIcon);
+        connect(timerScratchingIcon, SIGNAL(timeout()), this, SLOT(updateScratchingIcon()));
+        timerScratchingIcon->start(1000);
 
-        updateStakingIcon();
+        updateScratchingIcon();
     }
 
     // Progress bar and label for blocks download
@@ -1253,10 +1253,10 @@ void BitcoinGUI::setEncryptionStatus(WalletModel *walletModel)
         break;
     case WalletModel::Unlocked:
         labelWalletEncryptionIcon->show();
-        if(walletModel->getWalletUnlockStakingOnly())
+        if(walletModel->getWalletUnlockScratchingOnly())
         {
-            labelWalletEncryptionIcon->setPixmap(QIcon(":/icons/lock_staking").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
-            labelWalletEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>unlocked for staking only</b>"));
+            labelWalletEncryptionIcon->setPixmap(QIcon(":/icons/lock_scratching").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
+            labelWalletEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>unlocked for scratching only</b>"));
         }
         else
         {
@@ -1332,7 +1332,7 @@ void BitcoinGUI::toggleHidden()
     showNormalIfMinimized(true);
 }
 
-void BitcoinGUI::updateStakingIcon()
+void BitcoinGUI::updateScratchingIcon()
 {
     if(m_node.shutdownRequested())
         return;
@@ -1376,23 +1376,23 @@ void BitcoinGUI::updateStakingIcon()
         nWeight /= COIN;
         nNetworkWeight /= COIN;
 
-        labelStakingIcon->setPixmap(QIcon(":/icons/staking_on").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
-        labelStakingIcon->setToolTip(tr("Staking.<br>Your weight is %1<br>Network weight is %2<br>Expected time to earn reward is %3").arg(nWeight).arg(nNetworkWeight).arg(text));
+        labelScratchingIcon->setPixmap(QIcon(":/icons/scratching_on").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+        labelScratchingIcon->setToolTip(tr("Scratching.<br>Your weight is %1<br>Network weight is %2<br>Expected time to earn reward is %3").arg(nWeight).arg(nNetworkWeight).arg(text));
     }
     else
     {
-        labelStakingIcon->setPixmap(QIcon(":/icons/staking_off").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+        labelScratchingIcon->setPixmap(QIcon(":/icons/scratching_off").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
 
         if (m_node.getNodeCount(CConnman::CONNECTIONS_ALL) == 0)
-            labelStakingIcon->setToolTip(tr("Not staking because wallet is offline"));
+            labelScratchingIcon->setToolTip(tr("Not scratching because wallet is offline"));
         else if (m_node.isInitialBlockDownload())
-            labelStakingIcon->setToolTip(tr("Not staking because wallet is syncing"));
+            labelScratchingIcon->setToolTip(tr("Not scratching because wallet is syncing"));
         else if (!nWeight)
-            labelStakingIcon->setToolTip(tr("Not staking because you don't have mature coins"));
+            labelScratchingIcon->setToolTip(tr("Not scratching because you don't have mature coins"));
         else if (walletModel->wallet().isLocked())
-            labelStakingIcon->setToolTip(tr("Not staking because wallet is locked"));
+            labelScratchingIcon->setToolTip(tr("Not scratching because wallet is locked"));
         else
-            labelStakingIcon->setToolTip(tr("Not staking"));
+            labelScratchingIcon->setToolTip(tr("Not scratching"));
     }
 }
 
